@@ -2,7 +2,7 @@ import mysql.connector
 
 DB_HOST = "localhost"
 DB_USER = "root"
-DB_PASSWORD = "password123"
+DB_PASSWORD = "Kanna@6782"
 DB_NAME = "rental_db"
 DB_PORT = 3306
 
@@ -24,7 +24,7 @@ def get_connection():
         print("Check MySQL server status and password in db_config.py")
         return None
 
-def setup_tables(cur, conn, seed_sample_data=False):
+def setup_tables(cur, conn, seed_sample_data=False, verbose=True):
     try:
         cur.execute("""
         CREATE TABLE IF NOT EXISTS Customer (
@@ -83,7 +83,8 @@ def setup_tables(cur, conn, seed_sample_data=False):
         """)
 
         conn.commit()
-        print("Tables setup completed successfully.")
+        if verbose:
+            print("Tables setup completed successfully.")
 
         if seed_sample_data:
             cur.execute("SELECT COUNT(*) FROM Customer")
@@ -108,7 +109,8 @@ def setup_tables(cur, conn, seed_sample_data=False):
                 """)
 
                 conn.commit()
-                print("Sample seed data added.")
+                if verbose:
+                    print("Sample seed data added.")
 
     except Exception as e:
         print("Error during setup:", e)

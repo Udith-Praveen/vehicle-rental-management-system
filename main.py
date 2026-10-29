@@ -44,16 +44,19 @@ def add_vehicle(cur, conn):
         print("Error:", e)
 
 def show_vehicles(cur, available_only=False):
-    if available_only:
-        print("\n--- Available Vehicles ---")
-        cur.execute("SELECT VehicleID, Make, Model, LicensePlate, DailyRate, Status FROM Vehicle WHERE Status = 'Available' ORDER BY VehicleID")
-    else:
-        print("\n--- All Vehicles ---")
-        cur.execute("SELECT VehicleID, Make, Model, LicensePlate, DailyRate, Status FROM Vehicle ORDER BY VehicleID")
-    
-    rows = cur.fetchall()
-    headers = ["Vehicle ID", "Make", "Model", "License Plate", "Daily Rate", "Status"]
-    print_table(headers, rows)
+    try:
+        if available_only:
+            print("\n--- Available Vehicles ---")
+            cur.execute("SELECT VehicleID, Make, Model, LicensePlate, DailyRate, Status FROM Vehicle WHERE Status = 'Available' ORDER BY VehicleID")
+        else:
+            print("\n--- All Vehicles ---")
+            cur.execute("SELECT VehicleID, Make, Model, LicensePlate, DailyRate, Status FROM Vehicle ORDER BY VehicleID")
+        
+        rows = cur.fetchall()
+        headers = ["Vehicle ID", "Make", "Model", "License Plate", "Daily Rate", "Status"]
+        print_table(headers, rows)
+    except Exception as e:
+        print("Error fetching vehicles:", e)
 
 def remove_vehicle(cur, conn):
     print("\n--- Remove Vehicle ---")
@@ -95,10 +98,13 @@ def add_customer(cur, conn):
 
 def show_customers(cur):
     print("\n--- Customer List ---")
-    cur.execute("SELECT CustomerID, FirstName, LastName, LicenseNumber, PhoneNumber FROM Customer ORDER BY CustomerID")
-    rows = cur.fetchall()
-    headers = ["Customer ID", "First Name", "Last Name", "License", "Phone"]
-    print_table(headers, rows)
+    try:
+        cur.execute("SELECT CustomerID, FirstName, LastName, LicenseNumber, PhoneNumber FROM Customer ORDER BY CustomerID")
+        rows = cur.fetchall()
+        headers = ["Customer ID", "First Name", "Last Name", "License", "Phone"]
+        print_table(headers, rows)
+    except Exception as e:
+        print("Error fetching customers:", e)
 
 def remove_customer(cur, conn):
     print("\n--- Remove Customer ---")
@@ -177,24 +183,27 @@ def return_vehicle(cur, conn):
 
 def show_rentals(cur):
     print("\n--- Rentals List ---")
-    query = """
-    SELECT 
-        r.RentalID,
-        CONCAT(c.FirstName, ' ', c.LastName) AS Customer,
-        CONCAT(v.Make, ' ', v.Model) AS Vehicle,
-        v.LicensePlate,
-        r.RentalDate,
-        IFNULL(r.ReturnDate, 'Pending') AS ReturnDate,
-        r.TotalCost
-    FROM Rental r
-    JOIN Customer c ON r.CustomerID = c.CustomerID
-    JOIN Vehicle v ON r.VehicleID = v.VehicleID
-    ORDER BY r.RentalID DESC
-    """
-    cur.execute(query)
-    rows = cur.fetchall()
-    headers = ["Rental ID", "Customer", "Vehicle", "Plate", "Rental Date", "Return Date", "Total Cost"]
-    print_table(headers, rows)
+    try:
+        query = """
+        SELECT 
+            r.RentalID,
+            CONCAT(c.FirstName, ' ', c.LastName) AS Customer,
+            CONCAT(v.Make, ' ', v.Model) AS Vehicle,
+            v.LicensePlate,
+            r.RentalDate,
+            IFNULL(r.ReturnDate, 'Pending') AS ReturnDate,
+            r.TotalCost
+        FROM Rental r
+        JOIN Customer c ON r.CustomerID = c.CustomerID
+        JOIN Vehicle v ON r.VehicleID = v.VehicleID
+        ORDER BY r.RentalID DESC
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        headers = ["Rental ID", "Customer", "Vehicle", "Plate", "Rental Date", "Return Date", "Total Cost"]
+        print_table(headers, rows)
+    except Exception as e:
+        print("Error fetching rentals:", e)
 
 def log_payment(cur, conn):
     print("\n--- Log Payment ---")
@@ -214,10 +223,13 @@ def log_payment(cur, conn):
 
 def show_payments(cur):
     print("\n--- Payments History ---")
-    cur.execute("SELECT PaymentID, RentalID, PaymentDate, Amount, PaymentMethod FROM Payment ORDER BY PaymentID DESC")
-    rows = cur.fetchall()
-    headers = ["Payment ID", "Rental ID", "Date", "Amount", "Method"]
-    print_table(headers, rows)
+    try:
+        cur.execute("SELECT PaymentID, RentalID, PaymentDate, Amount, PaymentMethod FROM Payment ORDER BY PaymentID DESC")
+        rows = cur.fetchall()
+        headers = ["Payment ID", "Rental ID", "Date", "Amount", "Method"]
+        print_table(headers, rows)
+    except Exception as e:
+        print("Error fetching payments:", e)
 
 def log_maintenance(cur, conn):
     print("\n--- Log Vehicle Maintenance ---")
@@ -243,16 +255,19 @@ def log_maintenance(cur, conn):
 
 def show_maintenance(cur):
     print("\n--- Maintenance Logs ---")
-    query = """
-    SELECT m.MaintenanceID, CONCAT(v.Make, ' ', v.Model), m.ServiceDate, m.Description, m.Cost
-    FROM Maintenance m
-    JOIN Vehicle v ON m.VehicleID = v.VehicleID
-    ORDER BY m.MaintenanceID DESC
-    """
-    cur.execute(query)
-    rows = cur.fetchall()
-    headers = ["ID", "Vehicle", "Date", "Description", "Cost"]
-    print_table(headers, rows)
+    try:
+        query = """
+        SELECT m.MaintenanceID, CONCAT(v.Make, ' ', v.Model), m.ServiceDate, m.Description, m.Cost
+        FROM Maintenance m
+        JOIN Vehicle v ON m.VehicleID = v.VehicleID
+        ORDER BY m.MaintenanceID DESC
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        headers = ["ID", "Vehicle", "Date", "Description", "Cost"]
+        print_table(headers, rows)
+    except Exception as e:
+        print("Error fetching maintenance:", e)
 
 def main():
     conn = get_connection()
@@ -261,6 +276,7 @@ def main():
         sys.exit(1)
 
     cur = conn.cursor()
+    setup_tables(cur, conn, seed_sample_data=True, verbose=False)
 
     while True:
         print("\n-------------------------------------------")
