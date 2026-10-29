@@ -24,7 +24,7 @@ Mini project for rdbms/
 ├── main.py              # Main terminal menu and operations
 ├── connection.py        # Entry file
 ├── requirements.txt     # Python dependency (mysql-connector-python)
-└── README.md            # Project documentation and viva notes
+└── README.md            # Project documentation
 ```
 
 - **`schema.sql`**: Contains the SQL code to create the database, tables, keys, and insert sample data.
@@ -212,26 +212,4 @@ Sample output when viewing vehicles:
 +------------+---------+---------+---------------+------------+-----------+
 ```
 
----
 
-## 7. Viva Voce / Exam Q&A (Simple & Direct)
-
-**Q1: What is an RDBMS?**  
-*Answer:* A Relational Database Management System organizes data into tables consisting of rows (tuples) and columns (attributes), where relationships between tables are maintained using Primary and Foreign Keys.
-
-**Q2: What is a Primary Key and a Foreign Key in your project?**  
-*Answer:* 
-- A Primary Key uniquely identifies a record in a table, like `CustomerID` in the `Customer` table or `VehicleID` in the `Vehicle` table.
-- A Foreign Key is a field that references the Primary Key of another table. In the `Rental` table, `CustomerID` and `VehicleID` are Foreign Keys linking back to `Customer` and `Vehicle`.
-
-**Q3: What type of relationship exists between Customer and Rental?**  
-*Answer:* A One-to-Many (1:M) relationship. One customer can make multiple rentals over time, but each rental belongs to one customer.
-
-**Q4: Why did you use an INNER JOIN query?**  
-*Answer:* The `Rental` table only stores IDs (`CustomerID`, `VehicleID`). To display meaningful output on screen (customer's name and car name), we use `INNER JOIN` to match records across the `Rental`, `Customer`, and `Vehicle` tables.
-
-**Q5: How does Python interact with MySQL in your project?**  
-*Answer:* We use `mysql.connector`. It creates a connection object to MySQL. Then we use a `cursor` to execute SQL queries (`cur.execute()`), read results (`cur.fetchall()`), and save changes using `conn.commit()`.
-
-**Q6: What happens when a vehicle is rented?**  
-*Answer:* The system creates a new row in the `Rental` table and automatically updates the vehicle's `Status` in the `Vehicle` table from `'Available'` to `'Rented'`.
